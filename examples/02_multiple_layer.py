@@ -16,6 +16,7 @@ Network that consists of multiple analog layers. It aims to learn to sum all
 the elements from one array.
 """
 
+
 # Imports from PyTorch.
 from torch import Tensor
 from torch.nn.functional import mse_loss
@@ -42,7 +43,7 @@ model = Sequential(
 opt = AnalogSGD(model.parameters(), lr=0.5)
 opt.regroup_param_groups(model)
 
-for epoch in range(100):
+for _ in range(100):
     # Add the training Tensor to the model (input).
     pred = model(x_b)
     # Add the expected output Tensor.

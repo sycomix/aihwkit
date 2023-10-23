@@ -17,6 +17,7 @@ SVHN dataset on Analog Network using weight scaling.
 Learning rates of η = 0.1 for all the epochs with minibatch 128.
 """
 
+
 import os
 from datetime import datetime
 
@@ -34,12 +35,8 @@ from aihwkit.optim import AnalogSGD
 from aihwkit.simulator.presets.configs import GokmenVlasovPreset
 
 
-# Check device
-USE_CUDA = 0
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-if torch.cuda.is_available():
-    USE_CUDA = 1
-
+USE_CUDA = 1 if torch.cuda.is_available() else 0
 # Path to store datasets
 PATH_DATASET = os.path.join('data', 'DATASET')
 
@@ -80,41 +77,89 @@ def load_images():
 
 def VGG8():
     """VGG8 inspired analog model."""
-    model = AnalogSequential(
-        AnalogConv2d(in_channels=3, out_channels=128, kernel_size=3, stride=1, padding=1,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
+    return AnalogSequential(
+        AnalogConv2d(
+            in_channels=3,
+            out_channels=128,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
         nn.ReLU(),
-        AnalogConv2d(in_channels=128, out_channels=128, kernel_size=3, stride=1, padding=1,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
+        AnalogConv2d(
+            in_channels=128,
+            out_channels=128,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
         nn.BatchNorm2d(128),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1),
-        AnalogConv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
+        AnalogConv2d(
+            in_channels=128,
+            out_channels=256,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
         nn.ReLU(),
-        AnalogConv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
+        AnalogConv2d(
+            in_channels=256,
+            out_channels=256,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
         nn.BatchNorm2d(256),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1),
-        AnalogConv2d(in_channels=256, out_channels=512, kernel_size=3, stride=1, padding=1,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
+        AnalogConv2d(
+            in_channels=256,
+            out_channels=512,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
         nn.ReLU(),
-        AnalogConv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
+        AnalogConv2d(
+            in_channels=512,
+            out_channels=512,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
         nn.BatchNorm2d(512),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1),
         nn.Flatten(),
-        AnalogLinear(in_features=8192, out_features=1024,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
+        AnalogLinear(
+            in_features=8192,
+            out_features=1024,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
         nn.ReLU(),
-        AnalogLinear(in_features=1024, out_features=N_CLASSES,
-                     rpu_config=RPU_CONFIG, weight_scaling_omega=WEIGHT_SCALING_OMEGA),
-        nn.LogSoftmax(dim=1)
+        AnalogLinear(
+            in_features=1024,
+            out_features=N_CLASSES,
+            rpu_config=RPU_CONFIG,
+            weight_scaling_omega=WEIGHT_SCALING_OMEGA,
+        ),
+        nn.LogSoftmax(dim=1),
     )
-
-    return model
 
 
 def create_sgd_optimizer(model, learning_rate):

@@ -45,14 +45,9 @@ class BasicTrainingConverter:
                                            experiment.learning_rate,
                                            experiment.loss_function)
 
-        training_input = TrainingInput(
-            version=version,
-            dataset=dataset,
-            network=network,
-            training=training
+        return TrainingInput(
+            version=version, dataset=dataset, network=network, training=training
         )
-
-        return training_input
 
     def from_proto(self, training_proto: Any) -> Any:
         """Convert a protobuf representation to an `Experiment`."""
@@ -84,7 +79,7 @@ class BasicTrainingConverter:
     @staticmethod
     def _dataset_to_proto(dataset: type, batch_size: int) -> Any:
         if dataset not in Mappings.datasets.keys():
-            raise ConversionError('Unsupported dataset: {}'.format(dataset))
+            raise ConversionError(f'Unsupported dataset: {dataset}')
 
         return Dataset(
             dataset_id=Mappings.datasets[dataset],
@@ -99,7 +94,7 @@ class BasicTrainingConverter:
         children_types = {type(layer) for layer in model.children()}
         valid_types = set(Mappings.layers.keys()) | set(Mappings.activation_functions.keys())
         if children_types - valid_types:
-            raise ConversionError('Unsupported layers: {}'.format(children_types - valid_types))
+            raise ConversionError(f'Unsupported layers: {children_types - valid_types}')
 
         network = Network()
         for child in model.children():
@@ -124,7 +119,7 @@ class BasicTrainingConverter:
             loss_function: _Loss
     ) -> Any:
         if loss_function not in Mappings.loss_functions.keys():
-            raise ConversionError('Unsupported loss function: {}'.format(loss_function))
+            raise ConversionError(f'Unsupported loss function: {loss_function}')
 
         # Build optimizer manually.
         optimizer = OptimizerProto(id='AnalogSGD')
@@ -134,14 +129,13 @@ class BasicTrainingConverter:
                 type=AttributeProto.AttributeType.FLOAT,  # type: ignore
                 f=learning_rate))
 
-        training = Training(
+        return Training(
             epochs=epochs,
             optimizer=optimizer,
             loss_function=Mappings.loss_functions[loss_function].to_proto(
-                loss_function(), LossFunctionProto)
+                loss_function(), LossFunctionProto
+            ),
         )
-
-        return training
 
     # Methods for converting from proto.
 

@@ -272,13 +272,4 @@ class BasicTraining(Experiment):
 
     def __str__(self) -> str:
         """Return a string representation of a BasicTraining experiment."""
-        return ('{}(dataset={}, batch_size={}, loss_function={}, epochs={}, '
-                'learning_rate={}, model={})'.format(
-                    self.__class__.__name__,
-                    getattr(self.dataset, '__name__', self.dataset),
-                    self.batch_size,
-                    getattr(self.loss_function, '__name__', self.loss_function),
-                    self.epochs,
-                    self.learning_rate,
-                    self.model
-                ))
+        return f"{self.__class__.__name__}(dataset={getattr(self.dataset, '__name__', self.dataset)}, batch_size={self.batch_size}, loss_function={getattr(self.loss_function, '__name__', self.loss_function)}, epochs={self.epochs}, learning_rate={self.learning_rate}, model={self.model})"

@@ -73,9 +73,9 @@ class ApiClient:
                     json_response = ex.response.json()
                 except Exception:  # pylint: disable=broad-except
                     json_response = {}
-                raise CredentialsError('Error while trying to log in: {}'.format(
-                    json_response.get('message', 'unknown')
-                )) from ex
+                raise CredentialsError(
+                    f"Error while trying to log in: {json_response.get('message', 'unknown')}"
+                ) from ex
             raise
 
         jwt_token = GeneralParser.parse_login(response)

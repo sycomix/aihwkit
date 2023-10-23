@@ -29,12 +29,7 @@ class ResponseError(CloudError):
         super().__init__(str(self))
 
     def __str__(self) -> str:
-        return '{} {} for url: {} {}'.format(
-            self.response.status_code,
-            self.response.reason,
-            self.response.request.method,
-            self.url
-        )
+        return f'{self.response.status_code} {self.response.reason} for url: {self.response.request.method} {self.url}'
 
     @staticmethod
     def _sanitize_url(url: str) -> str:
@@ -50,7 +45,7 @@ class ApiResponseError(ResponseError):
         """Remove sensitive parts from an url."""
         parts = urlparse(url)
 
-        return '{}{}'.format(parts.path, '?...' if parts.query else '')
+        return f"{parts.path}{'?...' if parts.query else ''}"
 
 
 class InvalidResponseFieldError(CloudError):

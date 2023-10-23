@@ -19,6 +19,7 @@ Uses learning rates of η = 0.01, 0.005, and 0.0025
 for epochs 0–10, 11–20, and 21–30, respectively.
 """
 
+
 import os
 from time import time
 
@@ -34,12 +35,8 @@ from aihwkit.optim import AnalogSGD
 from aihwkit.simulator.configs import SingleRPUConfig
 from aihwkit.simulator.configs.devices import ConstantStepDevice
 
-# Check device
-USE_CUDA = 0
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-if torch.cuda.is_available():
-    USE_CUDA = 1
-
+USE_CUDA = 1 if torch.cuda.is_available() else 0
 # Path where the datasets will be stored.
 PATH_DATASET = os.path.join('data', 'DATASET')
 
@@ -148,7 +145,7 @@ def train(model, train_set):
         # Decay learning rate if needed.
         scheduler.step()
 
-    print('\nTraining Time (s) = {}'.format(time()-time_init))
+    print(f'\nTraining Time (s) = {time() - time_init}')
 
 
 def test_evaluation(model, val_set):
@@ -183,8 +180,8 @@ def test_evaluation(model, val_set):
             predicted_ok += 1
         total_images += 1
 
-    print('\nNumber Of Images Tested = {}'.format(total_images))
-    print('Model Accuracy = {}'.format(predicted_ok/total_images))
+    print(f'\nNumber Of Images Tested = {total_images}')
+    print(f'Model Accuracy = {predicted_ok / total_images}')
 
 
 def main():

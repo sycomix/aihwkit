@@ -15,6 +15,7 @@
 Mnist dataset on a LeNet5 inspired network.
 """
 
+
 import os
 from datetime import datetime
 
@@ -34,12 +35,8 @@ from aihwkit.simulator.configs import InferenceRPUConfig
 from aihwkit.simulator.configs.utils import BoundManagementType, WeightNoiseType
 from aihwkit.simulator.noise_models import PCMLikeNoiseModel
 
-# Check device
-USE_CUDA = 0
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-if torch.cuda.is_available():
-    USE_CUDA = 1
-
+USE_CUDA = 1 if torch.cuda.is_available() else 0
 # Path to store datasets
 PATH_DATASET = os.path.join('data', 'DATASET')
 
@@ -102,9 +99,7 @@ class LeNet5(AnalogSequential):
         x = self.feature_extractor(x)
         x = torch.flatten(x, 1)
         logits = self.classifier(x)
-        probs = F.softmax(logits, dim=1)
-
-        return probs
+        return F.softmax(logits, dim=1)
 
 
 def create_sgd_optimizer(model, learning_rate):

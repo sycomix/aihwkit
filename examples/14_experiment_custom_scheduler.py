@@ -16,6 +16,7 @@ Example of customization of a Basic Training experiment, adding the use of
 a scheduler to the base experiment.
 """
 
+
 import os
 
 # Imports from PyTorch.
@@ -32,12 +33,8 @@ from aihwkit.nn import AnalogLinear, AnalogSequential
 from aihwkit.simulator.configs import SingleRPUConfig
 from aihwkit.simulator.configs.devices import ConstantStepDevice
 
-# Check device
-USE_CUDA = 0
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-if torch.cuda.is_available():
-    USE_CUDA = 1
-
+USE_CUDA = 1 if torch.cuda.is_available() else 0
 # Path where the datasets will be stored.
 PATH_DATASET = os.path.join('data', 'DATASET')
 

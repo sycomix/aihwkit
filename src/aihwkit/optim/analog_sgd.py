@@ -91,11 +91,7 @@ class AnalogSGD(SGD):
         Returns:
             The loss, if ``closure`` has been passed as a parameter.
         """
-        # pylint: disable=too-many-branches
-        loss = None
-        if closure is not None:
-            loss = closure()
-
+        loss = closure() if closure is not None else None
         for group in self.param_groups:
             learning_rate = group['lr']
             weight_decay = group['weight_decay']
@@ -136,11 +132,7 @@ class AnalogSGD(SGD):
                     else:
                         buf = param_state['momentum_buffer']
                         buf.mul_(momentum).add_(d_p, alpha=1 - dampening)
-                    if nesterov:
-                        d_p = d_p.add(buf, alpha=momentum)
-                    else:
-                        d_p = buf
-
+                    d_p = d_p.add(buf, alpha=momentum) if nesterov else buf
                 param.add_(d_p, alpha=-group['lr'])
 
         return loss

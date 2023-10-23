@@ -170,15 +170,14 @@ class TileTest(ParametrizedTestCase):
         """Tests whether post update diffusion is performed"""
         rpu_config = self.get_rpu_config()
 
-        if not hasattr(rpu_config.device, 'diffusion'):
-            if hasattr(rpu_config.device, 'unit_cell_devices') \
-               and hasattr(rpu_config.device.unit_cell_devices[-1], 'diffusion'):
-                rpu_config.device.unit_cell_devices[-1].diffusion = 0.323
-            else:
-                raise SkipTest('This device does not support diffusion')
-        else:
+        if hasattr(rpu_config.device, 'diffusion'):
             rpu_config.device.diffusion = 0.323
 
+        elif hasattr(rpu_config.device, 'unit_cell_devices') \
+                   and hasattr(rpu_config.device.unit_cell_devices[-1], 'diffusion'):
+            rpu_config.device.unit_cell_devices[-1].diffusion = 0.323
+        else:
+            raise SkipTest('This device does not support diffusion')
         analog_tile = self.get_tile(2, 3, rpu_config=rpu_config, bias=True)
 
         weights = Tensor([[0.1, 0.2, 0.3], [0.4, -0.5, -0.6]])
@@ -198,15 +197,14 @@ class TileTest(ParametrizedTestCase):
         """Tests whether post update decay is performed"""
         rpu_config = self.get_rpu_config()
 
-        if not hasattr(rpu_config.device, 'lifetime'):
-            if hasattr(rpu_config.device, 'unit_cell_devices') \
-               and hasattr(rpu_config.device.unit_cell_devices[-1], 'lifetime'):
-                rpu_config.device.unit_cell_devices[-1].lifetime = 100.
-            else:
-                raise SkipTest('This device does not support lifetime')
-        else:
+        if hasattr(rpu_config.device, 'lifetime'):
             rpu_config.device.lifetime = 100.
 
+        elif hasattr(rpu_config.device, 'unit_cell_devices') \
+                   and hasattr(rpu_config.device.unit_cell_devices[-1], 'lifetime'):
+            rpu_config.device.unit_cell_devices[-1].lifetime = 100.
+        else:
+            raise SkipTest('This device does not support lifetime')
         analog_tile = self.get_tile(2, 3, rpu_config=rpu_config, bias=True)
 
         weights = Tensor([[0.1, 0.2, 0.3], [0.4, -0.5, -0.6]])

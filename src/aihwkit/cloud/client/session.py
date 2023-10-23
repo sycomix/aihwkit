@@ -85,12 +85,12 @@ class ApiSession(Session):
 
         self.jwt_token = None  # type: Optional[str]
 
-        self.headers.update({'User-Agent': 'aihwkit/{}'.format(__version__)})
+        self.headers.update({'User-Agent': f'aihwkit/{__version__}'})
 
     def update_jwt_token(self, jwt_token: str) -> None:
         """Set the jwt token for the session."""
         self.jwt_token = jwt_token
-        self.headers.update({'Authorization': 'Bearer {}'.format(jwt_token)})
+        self.headers.update({'Authorization': f'Bearer {jwt_token}'})
 
     def request(
             self,
@@ -114,7 +114,7 @@ class ApiSession(Session):
             ApiResponseError: if the response did not have a valid status code.
         """
         # pylint: disable=signature-differs
-        full_url = '{}/{}'.format(self.api_url, str(url))
+        full_url = f'{self.api_url}/{str(url)}'
 
         response = super().request(method, full_url, *args, **kwargs)
 

@@ -56,8 +56,8 @@ class CloudRunner(Runner):
             api_url = api_url or config.url
             api_token = api_token or config.token
 
-            if not api_url or not api_token:
-                raise CredentialsError('No credentials could be found')
+        if not api_url or not api_token:
+            raise CredentialsError('No credentials could be found')
 
         self.api_url = api_url
         self.api_token = api_token
@@ -114,9 +114,6 @@ class CloudRunner(Runner):
         # pylint: disable=arguments-differ
         # Generate an experiment name if not given.
         if not name:
-            name = 'aihwkit cloud experiment ({}, {} layers)'.format(
-                experiment.dataset.__name__,
-                len(experiment.model)
-            )
+            name = f'aihwkit cloud experiment ({experiment.dataset.__name__}, {len(experiment.model)} layers)'
 
         return self.api_client.experiment_create(experiment, name, device)

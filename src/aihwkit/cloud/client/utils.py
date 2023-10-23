@@ -51,15 +51,17 @@ class ClientConfiguration:
             configuration file.
         """
         parser = ConfigParser()
-        parser.read(['aihwkit.conf',
-                     path.expanduser('{}/aihwkit/aihwkit.conf'.format(
-                         getenv('XDG_CONFIG_HOME', '~/.config')))])
+        parser.read(
+            [
+                'aihwkit.conf',
+                path.expanduser(
+                    f"{getenv('XDG_CONFIG_HOME', '~/.config')}/aihwkit/aihwkit.conf"
+                ),
+            ]
+        )
 
         # Check that the expected section is present.
-        if 'cloud' in parser:
-            return dict(parser['cloud'])
-
-        return {}
+        return dict(parser['cloud']) if 'cloud' in parser else {}
 
     @property
     def token(self) -> str:

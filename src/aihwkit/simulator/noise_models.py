@@ -114,10 +114,9 @@ class SinglePairConductanceConverter(BaseConductanceConverter):
         if 'scale_ratio' not in params:
             raise ValueError('params do not contain scale_ratio')
 
-        weights = ((conductances[0] - self.g_min) -
-                   (conductances[1] - self.g_min)) / params['scale_ratio']
-
-        return weights
+        return (
+            (conductances[0] - self.g_min) - (conductances[1] - self.g_min)
+        ) / params['scale_ratio']
 
 
 class BaseNoiseModel:
@@ -155,9 +154,7 @@ class BaseNoiseModel:
                 noisy_conductances.append(self.apply_drift_noise_to_conductance(
                     g_prog, nu_drift, t_inference))
 
-        noisy_weights = self.g_converter.convert_back_to_weights(noisy_conductances, params)
-
-        return noisy_weights
+        return self.g_converter.convert_back_to_weights(noisy_conductances, params)
 
     @no_grad()
     def apply_programming_noise(self, weights: Tensor) -> Tuple[Tensor, List[Tensor]]:
@@ -208,14 +205,11 @@ class BaseNoiseModel:
         """
         target_conductances, params = self.g_converter.convert_to_conductances(weights)
 
-        noisy_conductances = []
-        for g_target, nu_drift in zip(target_conductances, nu_drift_list):
-            noisy_conductances.append(
-                self.apply_drift_noise_to_conductance(g_target, nu_drift, t_inference))
-
-        noisy_weights = self.g_converter.convert_back_to_weights(noisy_conductances, params)
-
-        return noisy_weights
+        noisy_conductances = [
+            self.apply_drift_noise_to_conductance(g_target, nu_drift, t_inference)
+            for g_target, nu_drift in zip(target_conductances, nu_drift_list)
+        ]
+        return self.g_converter.convert_back_to_weights(noisy_conductances, params)
 
     @no_grad()
     def generate_drift_coefficients(self, g_target: Tensor) -> Tensor:
@@ -330,9 +324,7 @@ class PCMLikeNoiseModel(BaseNoiseModel):
         # gt should be normalized wrt g_max
         mu_drift = (-0.0155 * log(g_relative) + 0.0244).clamp(min=0.049, max=0.1)
         sig_drift = (-0.0125 * log(g_relative) - 0.0059).clamp(min=0.008, max=0.045)
-        nu_drift = torch_abs(mu_drift + sig_drift * randn_like(g_relative)).clamp(min=0.0)
-
-        return nu_drift
+        return torch_abs(mu_drift + sig_drift * randn_like(g_relative)).clamp(min=0.0)
 
     @no_grad()
     def apply_drift_noise_to_conductance(
@@ -346,11 +338,7 @@ class PCMLikeNoiseModel(BaseNoiseModel):
         t = t_inference + self.t_0
 
         # drift
-        if t > self.t_0:
-            g_drift = g_prog * ((t / self.t_0) ** (- nu_drift))
-        else:
-            g_drift = g_prog
-
+        g_drift = g_prog * ((t / self.t_0) ** (- nu_drift)) if t > self.t_0 else g_prog
         # expected accumulated 1/f noise since start of programming at t=0
         if t > 0:
             q_s = (0.0088 / ((torch_abs(g_prog) /
@@ -381,9 +369,7 @@ class BaseDriftCompensation:
         Returns:
             reference tensor readout
         """
-        ref_value = self.readout(forward_output)
-
-        return ref_value
+        return self.readout(forward_output)
 
     @no_grad()
     def get_readout_tensor(self, in_size: int) -> Tensor:
@@ -403,9 +389,7 @@ class BaseDriftCompensation:
         """Read out the current value from the output of the forward
         pass and returns the drift compensation alpha scale."""
         current_value = self.readout(forward_output)
-        ratio = ref_value/current_value
-
-        return ratio
+        return ref_value/current_value
 
 
 class GlobalDriftCompensation(BaseDriftCompensation):
@@ -428,4 +412,4 @@ class GlobalDriftCompensation(BaseDriftCompensation):
         return ones((1, in_size))
 
     def __str__(self) -> str:
-        return '{}()'.format(self.__class__.__name__)
+        return f'{self.__class__.__name__}()'

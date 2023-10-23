@@ -117,7 +117,7 @@ class ExperimentStub(ApiStub):
         ret = super()._endpoint_map()
 
         # Use a different url for listing.
-        ret['list'] = Endpoint('{}/me'.format(self.base_url), 'GET')
+        ret['list'] = Endpoint(f'{self.base_url}/me', 'GET')
 
         return ret
 

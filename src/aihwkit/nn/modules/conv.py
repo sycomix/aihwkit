@@ -212,7 +212,7 @@ class AnalogConv1d(_AnalogConvNd):
         fold_indices = arange(2, x_input.size(2) + 2, dtype=float64).detach()
         shape = [1] + [1] + list(x_input.shape[2:])
         fold_indices = fold_indices.reshape(*shape)
-        if not all(item == 0 for item in self.padding):
+        if any(item != 0 for item in self.padding):
             fold_indices = pad(fold_indices, pad=[self.padding[0], self.padding[0]],
                                mode='constant', value=0)
         unfold = fold_indices.unfold(2, self.kernel_size[0], self.stride[0]).clone()
@@ -428,14 +428,14 @@ class AnalogConv3d(_AnalogConvNd):
                               dtype=float64).detach()
         shape = [1] + [1] + list(x_input.shape[2:])
         fold_indices = fold_indices.reshape(*shape)
-        if not all(item == 0 for item in self.padding):
+        if any(item != 0 for item in self.padding):
             fold_indices = pad(fold_indices, pad=[
                 self.padding[2], self.padding[2],
                 self.padding[1], self.padding[1],
                 self.padding[0], self.padding[0]], mode="constant", value=0)
         unfold = fold_indices.unfold(2, self.kernel_size[0], self.stride[0]). \
-            unfold(3, self.kernel_size[1], self.stride[1]). \
-            unfold(4, self.kernel_size[2], self.stride[2]).clone()
+                unfold(3, self.kernel_size[1], self.stride[1]). \
+                unfold(4, self.kernel_size[2], self.stride[2]).clone()
 
         fold_indices = unfold.reshape(-1, self.kernel_size[0] * self.kernel_size[1] *
                                       self.kernel_size[2]).transpose(0, 1).flatten().round()

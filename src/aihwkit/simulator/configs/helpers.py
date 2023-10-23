@@ -146,10 +146,7 @@ class _PrintableMixin:
                 # Skip fields with the default value.
                 return True
 
-            if 'hide_if' in field.metadata and field.metadata.get('hide_if') == value:
-                return True
-
-            return False
+            return 'hide_if' in field.metadata and field.metadata.get('hide_if') == value
 
         # Main loop.
 

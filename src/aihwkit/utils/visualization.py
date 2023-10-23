@@ -62,11 +62,7 @@ def compute_pulse_response(
     out_size = analog_tile.out_size
     in_size = analog_tile.in_size
 
-    if analog_tile.is_cuda:
-        device = torch_device('cuda')
-    else:
-        device = torch_device('cpu')
-
+    device = torch_device('cuda') if analog_tile.is_cuda else torch_device('cpu')
     total_iters = len(direction)
     w_trace = np.zeros((total_iters, out_size, in_size))
     in_vector = -ones(1, in_size, device=device)
@@ -111,8 +107,9 @@ def plot_pulse_response(
     if use_forward:
         plt.title(analog_tile.rpu_config.device.__class__.__name__)
     else:
-        plt.title('{} (without cycle/read noise)'
-                  .format(analog_tile.rpu_config.device.__class__.__name__))
+        plt.title(
+            f'{analog_tile.rpu_config.device.__class__.__name__} (without cycle/read noise)'
+        )
     plt.ylabel('Weight [conductance]')
     plt.xlabel('Pulse number #')
 
@@ -270,9 +267,7 @@ def get_tile_for_plotting(
     weights = config.device.as_bindings().w_min * ones((n_traces, 1))
     analog_tile.set_weights(weights)
 
-    if use_cuda and cuda.is_compiled():
-        return analog_tile.cuda()
-    return analog_tile
+    return analog_tile.cuda() if use_cuda and cuda.is_compiled() else analog_tile
 
 
 def estimate_n_steps(rpu_config: SingleRPUConfig) -> int:
@@ -295,8 +290,7 @@ def estimate_n_steps(rpu_config: SingleRPUConfig) -> int:
     w_min = device_binding.w_min
     w_max = device_binding.w_max
 
-    n_steps = int(np.round((w_max - w_min) / dw_min))
-    return n_steps
+    return int(np.round((w_max - w_min) / dw_min))
 
 
 def plot_response_overview(

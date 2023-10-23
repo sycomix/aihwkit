@@ -16,6 +16,7 @@ Simple network that consist of one analog layer. The network aims to learn
 to sum all the elements from one array.
 """
 
+
 # Imports from PyTorch.
 from torch import Tensor
 from torch.nn.functional import mse_loss
@@ -67,7 +68,7 @@ opt.regroup_param_groups(model)
 
 print(model.analog_tile.tile)
 
-for epoch in range(100):
+for _ in range(100):
     # Add the training Tensor to the model (input).
     pred = model(x)
     # Add the expected output Tensor.
@@ -83,8 +84,10 @@ model.eval()
 # Do inference with drift.
 pred_before = model(x)
 
-print('Correct value:\t {}'.format(y.detach().cpu().numpy().flatten()))
-print('Prediction after training:\t {}'.format(pred_before.detach().cpu().numpy().flatten()))
+print(f'Correct value:\t {y.detach().cpu().numpy().flatten()}')
+print(
+    f'Prediction after training:\t {pred_before.detach().cpu().numpy().flatten()}'
+)
 
 for t_inference in [0., 1., 20., 1000., 1e5]:
     model.drift_analog_weights(t_inference)

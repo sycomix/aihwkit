@@ -54,7 +54,7 @@ class LocalMetric:
     ) -> None:
         """Hook for `VALIDATION_EPOCH_BATCH_END`."""
         self.current_epoch['validation_images'] += total
-        self.current_epoch['validation_correct'] += int(correct)
+        self.current_epoch['validation_correct'] += correct
 
         self.current_epoch['validation_batches'] += 1
         self.current_epoch['validation_loss'] += validation_loss

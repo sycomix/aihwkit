@@ -95,11 +95,7 @@ class Function:
         for argument in source.arguments:
             type_ = self.args[argument.name]
 
-            if isinstance(type_, list):
-                proto_type = TYPES_LISTS[type_[0]]
-            else:
-                proto_type = TYPES[type_]
-
+            proto_type = TYPES_LISTS[type_[0]] if isinstance(type_, list) else TYPES[type_]
             new_argument = self.get_argument_from_proto(argument, proto_type.field, None)
             if isinstance(type_, list):
                 new_argument[argument.name] = list(new_argument[argument.name])
@@ -127,8 +123,9 @@ class LayerFunction(Function):
             try:
                 return Mappings.presets[preset_cls]
             except KeyError as ex:
-                raise ConversionError('Invalid rpu_config in layer: {} not '
-                                      'among the presets'.format(preset_cls)) from ex
+                raise ConversionError(
+                    f'Invalid rpu_config in layer: {preset_cls} not among the presets'
+                ) from ex
 
         return super().get_field_value_to_proto(source, field, default)
 
@@ -139,8 +136,9 @@ class LayerFunction(Function):
             try:
                 preset = InverseMappings.presets[preset_str]
             except KeyError as ex:
-                raise ConversionError('Invalid rpu_config in layer: {} not '
-                                      'among the presets'.format(preset_str)) from ex
+                raise ConversionError(
+                    f'Invalid rpu_config in layer: {preset_str} not among the presets'
+                ) from ex
             return {'rpu_config': preset()}
 
         return super().get_argument_from_proto(source, field, default)

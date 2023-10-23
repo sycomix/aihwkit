@@ -223,7 +223,7 @@ class AnalogModuleBase(Module):
         that takes into account the extra ``analog_tile_state`` key used by
         analog layers.
         """
-        key = '{}analog_tile_state'.format(prefix)
+        key = f'{prefix}analog_tile_state'
         if key in state_dict:
             analog_state = state_dict.pop(key)
             self.analog_tile.__setstate__(analog_state)
@@ -250,7 +250,7 @@ class AnalogModuleBase(Module):
 
         analog_state = self.analog_tile.__getstate__()
         current_state = super().state_dict(destination, prefix, keep_vars)
-        current_state['{}analog_tile_state'.format(prefix)] = analog_state
+        current_state[f'{prefix}analog_tile_state'] = analog_state
         return current_state
 
     def cpu(self) -> 'AnalogModuleBase':
@@ -330,7 +330,7 @@ class AnalogModuleBase(Module):
         """
         output = super().extra_repr()
         if self.realistic_read_write:
-            output += ', realistic_read_write={}'.format(self.realistic_read_write)
+            output += f', realistic_read_write={self.realistic_read_write}'
         if self.weight_scaling_omega > 0:
             output += ', weight_scaling_omega={:.3f}'.format(self.weight_scaling_omega)
 

@@ -16,6 +16,7 @@ Simple network that consist of one analog layer. The network aims to learn
 to sum all the elements from one array.
 """
 
+
 # Imports from PyTorch.
 from torch import Tensor
 from torch.nn.functional import mse_loss
@@ -46,7 +47,7 @@ if cuda.is_compiled():
 opt = AnalogSGD(model.parameters(), lr=0.1)
 opt.regroup_param_groups(model)
 
-for epoch in range(100):
+for _ in range(100):
     # Add the training Tensor to the model (input).
     pred = model(x)
     # Add the expected output Tensor.

@@ -60,18 +60,10 @@ class SerializationTest(ParametrizedTestCase):
     def get_layer_and_tile_weights(model):
         """Return the weights and biases of the model and the tile."""
         weight = model.weight.data.detach().cpu().numpy()
-        if model.use_bias:
-            bias = model.bias.data.detach().cpu().numpy()
-        else:
-            bias = None
-
+        bias = model.bias.data.detach().cpu().numpy() if model.use_bias else None
         analog_weight, analog_bias = model.analog_tile.get_weights()
         analog_weight = analog_weight.detach().cpu().numpy().reshape(weight.shape)
-        if model.use_bias:
-            analog_bias = analog_bias.detach().cpu().numpy()
-        else:
-            analog_bias = None
-
+        analog_bias = analog_bias.detach().cpu().numpy() if model.use_bias else None
         return weight, bias, analog_weight, analog_bias
 
     def test_save_load_state_dict_train(self):

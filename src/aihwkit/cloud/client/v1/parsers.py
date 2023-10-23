@@ -101,7 +101,7 @@ class ExperimentParser:
         if job_status in ('completed',):
             return CloudJobStatus.COMPLETED
 
-        raise InvalidResponseFieldError('Unsupported job status: {}'.format(job_status))
+        raise InvalidResponseFieldError(f'Unsupported job status: {job_status}')
 
     @staticmethod
     def parse_experiment_category(api_response: Dict) -> CloudExperimentCategory:
@@ -123,7 +123,8 @@ class ExperimentParser:
             return CloudExperimentCategory.BASIC_TRAINING
 
         raise InvalidResponseFieldError(
-            'Unsupported experiment category: {}'.format(job_category))
+            f'Unsupported experiment category: {job_category}'
+        )
 
     @staticmethod
     def parse_date_string(date_string: str) -> datetime:
